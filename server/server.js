@@ -4,12 +4,15 @@ import DBconnection from './database/db.js';
 import cors from 'cors';
 const app = express();
 
+app.set('trust proxy', true);
 
-app.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean);
+app.use(cors({ origin: allowedOrigins.length ? allowedOrigins : '*'}));
 app.use('/', router);
 
 DBconnection();
  
-app.listen(8000, () => {
-    console.log("Server is running on port 8000");
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });

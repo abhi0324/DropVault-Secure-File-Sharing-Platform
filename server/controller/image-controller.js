@@ -7,13 +7,14 @@ export const uploadImage = async (req, res)=> {
 
     try {
         const file = await File.create(fileObj);
+        const host = process.env.PUBLIC_BASE_URL || `${req.protocol}://${req.get('host')}`;
         res.status(200).json({
             msg: "File uploaded succesfully",
-            path: `http://localhost:8000/file/${file._id}`
+            path: `${host}/file/${file._id}`
         }); 
     }
     catch (error) {
-        console.res(error.message);
+        console.error(error.message);
         res.status(500).json({msg: "Error uploading file", error: error.message});
     }
 }
