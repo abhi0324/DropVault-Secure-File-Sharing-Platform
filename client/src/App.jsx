@@ -8,6 +8,7 @@ function App() {
   const [result, setResult] = useState('');
   const [error, setError] = useState('');
   const [progress, setProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef();
   const dropRef = useRef(null);
 
@@ -20,10 +21,12 @@ function App() {
           setError(`File exceeds ${MAX_SIZE_MB}MB limit.`);
           setResult('');
           setProgress(0);
+          setIsUploading(false);
           return;
         }
         setError('');
         setProgress(0);
+        setIsUploading(true);
         const data = new FormData();
         data.append("name", file.name);
         data.append("file", file);
@@ -41,6 +44,8 @@ function App() {
           setError(e?.message || 'Upload failed');
           setResult('');
           setProgress(0);
+        } finally {
+          setIsUploading(false);
         }
 
       }
@@ -94,10 +99,18 @@ function App() {
           style={{display: 'none'}} 
           onChange={(e) => setFile(e.target.files[0])}/>
         {file ? <p className="meta">Selected: {file.name}</p> : <p className="meta">No file selected</p>}
+        
+        {isUploading && !result ? (
+          <div className="uploading-state">
+            <div className="spinner"></div>
+            <p className="meta">Generating your shareable link...</p>
+          </div>
+        ) : null}
+        
         {progress > 0 && progress < 100 ? (
           <div className="meta" style={{ width: '100%', maxWidth: 560 }}>
             <div style={{ height: 10, background: 'rgba(255,255,255,0.08)', borderRadius: 999 }}>
-              <div style={{ height: 10, width: `${progress}%`, background: '#6366f1', borderRadius: 999 }} />
+              <div style={{ height: 10, width: `${progress}%`, background: '#8b5cf6', borderRadius: 999 }} />
             </div>
             <div style={{ marginTop: 6 }}>{progress}%</div>
           </div>
