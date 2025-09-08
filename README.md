@@ -133,4 +133,7 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 ---
 
 ## 📄 License
-[MIT](LICENSE) 
+
+© 2025 Abhiswant Chaudhary.  
+All rights reserved.  
+This project and its source code cannot be copied, modified, or distributed without explicit permission from the author.
