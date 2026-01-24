@@ -7,18 +7,41 @@ A modern, full-stack file sharing application built with **React**, **Express**,
 ---
 
 ## ✨ Features
-- **Easy File Upload:** Upload any file and get a unique, shareable download link.
-- **Download Tracking:** Each file's download count is tracked.
-- **Modern UI:** Clean, responsive React interface with drag-and-drop, copy link, and open link.
-- **Progress & Validation:** Upload progress bar and client-side size validation (25MB default).
-- **REST API:** Robust backend with Express and MongoDB.
+
+### Core Features
+- **Multiple File Upload:** Upload single or multiple files at once (up to 10 files)
+- **Easy File Upload:** Drag & drop or click to upload files
+- **Download Tracking:** Each file's download count is tracked
+- **Modern UI:** Clean, responsive React interface with beautiful gradients and animations
+
+### Security & Protection
+- **Password Protection:** Optional password protection for sensitive files
+- **File Expiration:** Set automatic expiration dates for files (auto-delete after X days)
+- **Server-Side Validation:** File size (25MB) and type validation on both client and server
+- **Security Filtering:** Blocks dangerous file types (executables, scripts, etc.)
+
+### User Experience
+- **File Previews:** Image previews before upload
+- **QR Code Generation:** Generate QR codes for easy mobile sharing
+- **Toast Notifications:** Beautiful toast notifications for user feedback
+- **Recent Uploads:** View and access recently uploaded files (stored locally)
+- **File Metadata:** Display file size, type, upload date, and expiration info
+- **Progress Tracking:** Real-time upload progress bar
+- **Copy to Clipboard:** One-click link copying
+
+### Advanced Features
+- **File Info API:** Get file metadata without downloading
+- **Automatic Cleanup:** Expired files are automatically deleted
+- **Orphaned File Cleanup:** Utility to clean up files not in database
+- **Error Handling:** Comprehensive error handling and user feedback
 
 ---
 
 ## 🖥️ Tech Stack
-- **Frontend:** React, Vite, Axios
+- **Frontend:** React, Vite, Axios, QRCode.react
 - **Backend:** Node.js, Express, Multer, Mongoose
 - **Database:** MongoDB
+- **Storage:** Local filesystem (can be replaced with S3/Cloudinary)
 
 ---
 
@@ -41,6 +64,8 @@ npm install
 cd ../client
 npm install
 ```
+
+**Note:** The frontend now includes `qrcode.react` for QR code generation. It will be installed automatically with `npm install`.
 
 ### 3. Set up environment variables
 Create a `.env` file in the `server` directory:
@@ -74,29 +99,49 @@ npm run dev
 ## 📦 Project Structure
 ```
 File-sharing-application/
-├── client/         # React frontend
+├── client/              # React frontend
 │   └── src/
-│       ├── App.jsx
-│       └── service/api.js
-├── server/         # Express backend
+│       ├── App.jsx      # Main application component
+│       ├── App.css      # Styling
+│       └── service/
+│           └── api.js   # API service layer
+├── server/              # Express backend
 │   ├── controller/
-│   │   └── image-controller.js
+│   │   └── image-controller.js  # Upload/download handlers
 │   ├── models/
-│   │   └── file.js
+│   │   └── file.js      # MongoDB file schema
 │   ├── routes/
-│   │   └── routes.js
+│   │   └── routes.js    # API routes
 │   ├── utils/
-│   │   └── upload.js
+│   │   ├── upload.js    # Multer configuration
+│   │   └── cleanup.js   # File cleanup utilities
 │   ├── database/
-│   │   └── db.js
-│   └── server.js
+│   │   └── db.js        # MongoDB connection
+│   └── server.js        # Express server setup
 ```
 
 ---
 
 ## 🛠️ API Endpoints
-- `POST /upload` — Upload a file (multipart/form-data, field: `file`)
-- `GET /file/:fileId` — Download a file by its unique ID
+
+### Upload File(s)
+- **POST** `/upload` — Upload single or multiple files
+  - **Body:** `multipart/form-data`
+  - **Fields:**
+    - `file` (required): File(s) to upload (can be multiple)
+    - `password` (optional): Password to protect the file
+    - `expiresInDays` (optional): Number of days until file expires
+  - **Response:** Array of uploaded file objects with shareable links
+
+### Get File Info
+- **GET** `/file/:fileId/info` — Get file metadata without downloading
+  - **Response:** File information (name, size, type, download count, expiration, etc.)
+
+### Download File
+- **GET** `/file/:fileId` — Download a file by its unique ID
+  - **Query Parameters:**
+    - `password` (optional): Password if file is protected
+  - **Response:** File download or error message
 
 ---
 
@@ -119,11 +164,71 @@ This setup deploys the frontend to Vercel and the backend to a host with persist
 
 ---
 
-## 🔒 Notes on Production Hardening
-- Replace local `multer` disk with S3/Cloudinary for reliable storage on serverless/free tiers.
-- Add password-protected and expiring links.
-- Restrict CORS to your deployed domains via `CORS_ORIGINS`.
-- Validate file types and size on both client and server.
+## 🔒 Security Features
+- ✅ Password protection for files
+- ✅ File expiration and automatic deletion
+- ✅ Server-side file size validation (25MB limit)
+- ✅ Dangerous file type filtering (executables, scripts blocked)
+- ✅ CORS configuration for allowed origins
+- ✅ Secure password hashing (SHA-256)
+
+## 🔧 Technical Improvements
+
+### Backend Enhancements
+- **Enhanced File Model:** Added `size`, `mimetype`, `originalName`, `password`, `expiresAt`, and `uploadedAt` fields with MongoDB TTL index support.
+- **Improved Upload Handler:** Support for multiple files, password hashing, and expiration date handling.
+- **New API Endpoints:** Added `/file/:fileId/info` for metadata and enhanced `/upload` with options.
+- **Cleanup Utilities:** Added functions for automated cleanup of expired and orphaned files.
+
+### Frontend Enhancements
+- **Modern UI Components:** Added file preview cards, upload options panel, and QR code display.
+- **Better State Management:** Handled multiple files, toast notifications, and recent uploads persistence.
+- **Improved UX:** Drag and drop support, real-time progress tracking, and responsive design improvements.
+
+## 🔄 Migration Notes
+
+### For Existing Users
+- The database schema has been updated. Existing files will remain functional but won't have the new metadata (size, mimetype, etc.).
+- New optional features like password protection and expiration are available for all new uploads.
+
+### For Developers
+- **Dependencies:** Install the new frontend dependency using `npm install` in the `client` directory.
+- **Maintenance:** Set up a cron job to run the cleanup utilities periodically as described in the Maintenance section.
+
+## 📝 Future Enhancements (Next Steps)
+- [ ] User authentication and accounts
+- [ ] File versioning and history
+- [ ] Advanced search and filtering
+- [ ] Cloud storage integration (S3, Cloudinary)
+- [ ] Virus scanning for uploaded files
+- [ ] Rate limiting to prevent abuse
+
+## 🧹 Maintenance
+
+### Cleanup Expired Files
+Run the cleanup utility to remove expired files:
+```javascript
+import { cleanupExpiredFiles, cleanupOrphanedFiles } from './utils/cleanup.js';
+
+// Clean expired files
+await cleanupExpiredFiles();
+
+// Clean orphaned files (files on disk but not in database)
+await cleanupOrphanedFiles();
+```
+
+Set up a cron job to run cleanup periodically:
+```bash
+# Example: Run cleanup daily at 2 AM
+0 2 * * * node /path/to/server/utils/cleanup.js
+```
+
+## 📝 Notes on Production Hardening
+- **Storage:** Replace local `multer` disk with S3/Cloudinary for reliable storage on serverless/free tiers
+- **Rate Limiting:** Consider adding rate limiting to prevent abuse
+- **File Scanning:** Add virus scanning for uploaded files
+- **Monitoring:** Set up logging and monitoring for file operations
+- **Backup:** Implement backup strategy for important files
 
 ---
 
