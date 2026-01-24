@@ -10,7 +10,8 @@ A modern, full-stack file sharing application built with **React**, **Express**,
 
 ### Core Features
 - **Multiple File Upload:** Upload single or multiple files at once (up to 10 files)
-- **Easy File Upload:** Drag & drop or click to upload files
+- **Easy File Upload:** Drag & drop or click to select files, then upload with one click
+- **Manual Upload Control:** Select files, configure options (password/expiry), then click "Upload Files" button
 - **Download Tracking:** Each file's download count is tracked
 - **Modern UI:** Clean, responsive React interface with beautiful gradients and animations
 
@@ -22,6 +23,7 @@ A modern, full-stack file sharing application built with **React**, **Express**,
 
 ### User Experience
 - **File Previews:** Image previews before upload
+- **Manual Upload Workflow:** Select files → Set password/expiry options → Click "Upload Files" button
 - **QR Code Generation:** Generate QR codes for easy mobile sharing
 - **Toast Notifications:** Beautiful toast notifications for user feedback
 - **Recent Uploads:** View and access recently uploaded files (stored locally)
@@ -93,6 +95,36 @@ npm run dev
 cd ../client
 npm run dev
 ```
+
+---
+
+## 📖 How to Use
+
+### Uploading Files
+
+1. **Select Files:** 
+   - Drag and drop files into the upload area, or
+   - Click "Choose Files" button to browse and select files
+
+2. **Configure Options (Optional):**
+   - Set a password to protect your files
+   - Set expiration time in days (files will auto-delete after expiration)
+
+3. **Upload:**
+   - Click the "Upload Files" button to start the upload
+   - Watch the progress bar as files upload
+   - Once complete, you'll receive shareable links
+
+4. **Share:**
+   - Copy the download link
+   - Share the link with others (include password if set)
+   - Generate QR code for easy mobile sharing
+
+### Downloading Files
+
+1. Open the shared link in your browser
+2. If password-protected, enter the password
+3. File will download automatically
 
 ---
 
@@ -184,6 +216,7 @@ This setup deploys the frontend to Vercel and the backend to a host with persist
 - **Modern UI Components:** Added file preview cards, upload options panel, and QR code display.
 - **Better State Management:** Handled multiple files, toast notifications, and recent uploads persistence.
 - **Improved UX:** Drag and drop support, real-time progress tracking, and responsive design improvements.
+- **Manual Upload Control:** Files no longer auto-upload on selection. Users can configure password/expiry options before clicking the "Upload Files" button, providing better control over the upload process.
 
 ## 🔄 Migration Notes
 

@@ -64,75 +64,71 @@ function App() {
     });
   }, [files]);
 
-  // Handle file upload
-  useEffect(() => {
-    const uploadFiles = async () => {
-      if (files.length === 0) return;
+  // Manual file upload handler
+  const handleUpload = async () => {
+    if (files.length === 0) return;
 
-      // Validate all files
-      const validFiles = [];
-      for (const file of files) {
-        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-          showToast(`File "${file.name}" exceeds ${MAX_SIZE_MB}MB limit`, 'error');
-          continue;
+    // Validate all files
+    const validFiles = [];
+    for (const file of files) {
+      if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+        showToast(`File "${file.name}" exceeds ${MAX_SIZE_MB}MB limit`, 'error');
+        continue;
+      }
+      validFiles.push(file);
+    }
+
+    if (validFiles.length === 0) {
+      setFiles([]);
+      return;
+    }
+
+    setError('');
+    setProgress(0);
+    setIsUploading(true);
+
+    const data = new FormData();
+    validFiles.forEach(file => {
+      data.append("file", file);
+    });
+
+    if (password) {
+      data.append("password", password);
+    }
+    if (expiresInDays) {
+      data.append("expiresInDays", expiresInDays);
+    }
+
+    try {
+      const response = await uploadFile(data, {
+        onUploadProgress: (evt) => {
+          if (!evt.total) return;
+          const pct = Math.round((evt.loaded * 100) / evt.total);
+          setProgress(pct);
         }
-        validFiles.push(file);
-      }
-
-      if (validFiles.length === 0) {
-        setFiles([]);
-        return;
-      }
-
-      setError('');
-      setProgress(0);
-      setIsUploading(true);
-
-      const data = new FormData();
-      validFiles.forEach(file => {
-        data.append("file", file);
       });
 
-      if (password) {
-        data.append("password", password);
-      }
-      if (expiresInDays) {
-        data.append("expiresInDays", expiresInDays);
-      }
+      const newUploads = response.files || [];
+      setUploadedFiles(newUploads);
+      
+      // Save to recent uploads
+      const updatedRecent = [...newUploads, ...recentUploads].slice(0, 10);
+      setRecentUploads(updatedRecent);
+      localStorage.setItem('recentUploads', JSON.stringify(updatedRecent));
 
-      try {
-        const response = await uploadFile(data, {
-          onUploadProgress: (evt) => {
-            if (!evt.total) return;
-            const pct = Math.round((evt.loaded * 100) / evt.total);
-            setProgress(pct);
-          }
-        });
-
-        const newUploads = response.files || [];
-        setUploadedFiles(newUploads);
-        
-        // Save to recent uploads
-        const updatedRecent = [...newUploads, ...recentUploads].slice(0, 10);
-        setRecentUploads(updatedRecent);
-        localStorage.setItem('recentUploads', JSON.stringify(updatedRecent));
-
-        showToast(`Successfully uploaded ${newUploads.length} file(s)!`, 'success');
-        setFiles([]);
-        setPassword('');
-        setExpiresInDays('');
-      } catch (e) {
-        const errorMsg = e?.response?.data?.msg || e?.message || 'Upload failed';
-        setError(errorMsg);
-        showToast(errorMsg, 'error');
-        setProgress(0);
-      } finally {
-        setIsUploading(false);
-      }
-    };
-
-    uploadFiles();
-  }, [files]);
+      showToast(`Successfully uploaded ${newUploads.length} file(s)!`, 'success');
+      setFiles([]);
+      setPassword('');
+      setExpiresInDays('');
+    } catch (e) {
+      const errorMsg = e?.response?.data?.msg || e?.message || 'Upload failed';
+      setError(errorMsg);
+      showToast(errorMsg, 'error');
+      setProgress(0);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   // Drag and drop handlers
   useEffect(() => {
@@ -243,7 +239,7 @@ function App() {
         )}
 
         {/* Options */}
-        {files.length > 0 && (
+        {files.length > 0 && !isUploading && (
           <div className="upload-options">
             <div className="option-group">
               <label>Password (optional):</label>
@@ -273,6 +269,26 @@ function App() {
                 className="option-input"
               />
             </div>
+            <button 
+              onClick={handleUpload}
+              disabled={isUploading}
+              className="upload-btn"
+              style={{
+                marginTop: '16px',
+                padding: '12px 24px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                borderRadius: '8px',
+                color: '#f8fafc',
+                cursor: isUploading ? 'not-allowed' : 'pointer',
+                opacity: isUploading ? 0.6 : 1,
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {isUploading ? 'Uploading...' : 'Upload Files'}
+            </button>
           </div>
         )}
 
