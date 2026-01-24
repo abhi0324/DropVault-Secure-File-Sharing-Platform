@@ -10,7 +10,18 @@ export const uploadFile = async (data, { onUploadProgress } = {}) => {
         return response.data;
     }
     catch(error) { 
-        console.log("Error whlile calling the api", error.message);
+        console.log("Error while calling the api", error.message);
+        throw error;
+    }
+};
+
+export const getFileInfo = async (fileId) => {
+    try {
+        const response = await axios.get(`${API_URL}/file/${fileId}/info`);
+        return response.data;
+    }
+    catch(error) {
+        console.log("Error fetching file info", error.message);
         throw error;
     }
 };
