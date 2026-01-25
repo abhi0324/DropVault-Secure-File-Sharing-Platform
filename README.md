@@ -123,8 +123,8 @@ npm run dev
 ### Downloading Files
 
 1. Open the shared link in your browser
-2. If password-protected, enter the password
-3. File will download automatically
+2. If password-protected, a password page will appear — enter the password and click **Download File**
+3. The file will download
 
 ---
 
