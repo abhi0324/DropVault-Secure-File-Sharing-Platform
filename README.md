@@ -52,7 +52,7 @@ A modern, full-stack secure file sharing platform built with **React**, **Expres
 ### 1. Clone the repository
 ```bash
 git clone <your-repo-url>
-cd File-sharing-application
+cd DropVault-Secure-File-Sharing-Platform
 ```
 
 ### 2. Install dependencies
@@ -130,7 +130,7 @@ npm run dev
 
 ## 📦 Project Structure
 ```
-File-sharing-application/
+DropVault-Secure-File-Sharing-Platform/
 ├── client/              # React frontend
 │   └── src/
 │       ├── App.jsx      # Main application component
