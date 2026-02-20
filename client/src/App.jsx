@@ -201,7 +201,7 @@ function App() {
         </div>
       )}
 
-      <h1>File Sharing Application</h1>
+      <h1>DropVault – Secure File Sharing Platform</h1>
       <p>Upload your files and share secure links with anyone</p>
 
       {/* Upload Section */}

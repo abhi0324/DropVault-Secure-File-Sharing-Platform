@@ -1,6 +1,6 @@
-# File Sharing Application
+# DropVault – Secure File Sharing Platform
 
-A modern, full-stack file sharing application built with **React**, **Express**, and **MongoDB**. Instantly upload files and share secure download links with anyone.
+A modern, full-stack secure file sharing platform built with **React**, **Express**, and **MongoDB**. Instantly upload files and share secure download links with anyone.
 
 **Live Demo:** https://file-sharing-application-sigma.vercel.app/
 
